@@ -1,10 +1,13 @@
 package com.lambdaschool.usermodel.services;
 
 import com.lambdaschool.usermodel.UserModelApplication;
+import com.lambdaschool.usermodel.exceptions.ResourceFoundException;
+import com.lambdaschool.usermodel.exceptions.ResourceNotFoundException;
 import com.lambdaschool.usermodel.models.Role;
 import com.lambdaschool.usermodel.models.User;
 import com.lambdaschool.usermodel.models.UserRoles;
 import com.lambdaschool.usermodel.models.Useremail;
+import com.lambdaschool.usermodel.repository.RoleRepository;
 import com.lambdaschool.usermodel.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -12,7 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import static org.mockito.ArgumentMatchers.any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -36,6 +39,9 @@ public class UserServiceImplTest {
 
     @MockBean
     private UserRepository userrepos;
+
+    @MockBean
+    private RoleRepository rolerepos;
 
     @MockBean
     private RoleService roleService;
@@ -104,6 +110,16 @@ public class UserServiceImplTest {
        assertEquals("testadmin1", userService.findUserById(4).getUsername());
     }
 
+    @Test(expected = ResourceNotFoundException.class)
+    public void findUserByIdNotFound() {
+        Mockito.when(userrepos.findById(4L))
+                .thenReturn(Optional.empty());
+
+        //Test that the name of the user with id 4 is testadmin
+        assertEquals("testadmin1", userService.findUserById(4).getUsername());
+    }
+
+
     @Test
     public void findByNameContaining() {
         Mockito.when(userrepos.findByUsernameContainingIgnoreCase("adm"))
@@ -111,6 +127,7 @@ public class UserServiceImplTest {
         //Test that there is 1 result for all users whose name includes adm
         assertEquals(2, userService.findByNameContaining("adm").size());
     }
+
 
     @Test
     public void findAll() {
@@ -122,13 +139,37 @@ public class UserServiceImplTest {
 
     @Test
     public void delete() {
+        Mockito.when(userrepos.findById(1L))
+                .thenReturn(Optional.of(userList.get(0)));
 
+        Mockito.doNothing()
+                .when(userrepos)
+                .deleteById(1L);
+
+        userService.delete(1);
+        assertEquals(2, userList.size());
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void deleteNotFound() {
+        Mockito.when(userrepos.findById(1L))
+                .thenReturn(Optional.empty());
+
+        Mockito.doNothing()
+                .when(userrepos)
+                .deleteById(1L);
+
+        userService.delete(1);
+        assertEquals(2, userList.size());
     }
 
     @Test
     public void findByName() {
+        Mockito.when(userrepos.findByUsername("testadmin1"))
+                .thenReturn(userList.get(0));
+
         //Test that the id of user whose name is testadmin is 4
-        assertEquals(4, userService.findByName("testadmin").getUserid());
+        assertEquals(10, userService.findByName("testadmin1").getUserid());
     }
 
     @Test
@@ -149,6 +190,10 @@ public class UserServiceImplTest {
         Mockito.when(userrepos.save(any(User.class)))
                 .thenReturn(testUser);
 
+        //Mock repository
+        Mockito.when(roleService.findRoleById(1))
+                .thenReturn(testRole);
+
         //Save user
         User savedUser = userService.save(testUser);
 
@@ -159,11 +204,21 @@ public class UserServiceImplTest {
         assertEquals("testuser", savedUser.getUsername());
     }
 
+
     @Test
     public void update() {
     }
 
     @Test
     public void deleteAll() {
+        Mockito.when(userrepos.findAll())
+                .thenReturn(userList);
+
+        Mockito.doNothing()
+                .when(userrepos)
+                .deleteAll();
+
+        userService.deleteAll();
+        assertEquals(2, userList.size());
     }
 }
