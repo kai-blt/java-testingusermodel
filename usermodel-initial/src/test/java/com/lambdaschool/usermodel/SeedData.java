@@ -29,10 +29,10 @@ import java.util.Locale;
 //if false, the command line runner will not run and seed data WON'T load
 //Creates custom application properties
 @ConditionalOnProperty(
-    prefix = "command.line.runner",
-    value = "enabled",
-    havingValue = "true",
-    matchIfMissing = true)
+        prefix = "command.line.runner",
+        value = "enabled",
+        havingValue = "true",
+        matchIfMissing = true)
 @Component
 public class SeedData
     implements CommandLineRunner
@@ -59,7 +59,6 @@ public class SeedData
      * @param args The parameter is required by the parent interface but is not used in this process.
      */
     @Transactional
-
     @Override
     public void run(String[] args) throws
                                    Exception
@@ -75,7 +74,7 @@ public class SeedData
         r3 = roleService.save(r3);
 
         // admin, data, user
-        User u1 = new User("admin",
+        User u1 = new User("Testadmin",
             "password",
             "admin@lambdaschool.local");
         u1.getRoles()
@@ -97,7 +96,7 @@ public class SeedData
         userService.save(u1);
 
         // data, user
-        User u2 = new User("cinnamon",
+        User u2 = new User("Testcinnamon",
             "1234567",
             "cinnamon@lambdaschool.local");
         u2.getRoles()
@@ -118,7 +117,7 @@ public class SeedData
         userService.save(u2);
 
         // user
-        User u3 = new User("barnbarn",
+        User u3 = new User("Testbarnbarn",
             "ILuvM4th!",
             "barnbarn@lambdaschool.local");
         u3.getRoles()
@@ -129,7 +128,7 @@ public class SeedData
                 "barnbarn@email.local"));
         userService.save(u3);
 
-        User u4 = new User("puttat",
+        User u4 = new User("Testputtat",
             "password",
             "puttat@school.lambda");
         u4.getRoles()
@@ -137,7 +136,7 @@ public class SeedData
                 r2));
         userService.save(u4);
 
-        User u5 = new User("misskitty",
+        User u5 = new User("Testmisskitty",
             "password",
             "misskitty@school.lambda");
         u5.getRoles()
