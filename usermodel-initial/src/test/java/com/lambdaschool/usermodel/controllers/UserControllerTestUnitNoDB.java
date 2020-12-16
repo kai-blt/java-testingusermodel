@@ -155,7 +155,71 @@ public class UserControllerTestUnitNoDB {
     }
 
     @Test
-    public void getUserByName() {
+    public void getUserByIdNotFound() throws Exception {
+        //Mock API Url
+        String apiUrl = "/users/user/101";
+
+        //Mock the service call to find user by id
+        Mockito.when(userService.findUserById(101)).thenReturn(null);
+
+        //Make a request builder to mock client request
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
+
+        //Perform the request and return the result
+        MvcResult result = mockMvc.perform(rb).andReturn();
+
+        //Get the response from the result and convert to string
+        String testResult = result.getResponse().getContentAsString();
+
+        String expectedResult = "";
+
+        assertEquals(expectedResult, testResult);
+    }
+
+    @Test
+    public void getUserByName() throws Exception{
+        //Mock API Url
+        String apiUrl = "/users/user/name/Testadmin1";
+
+        //Mock the service call to find user by id
+        Mockito.when(userService.findByName("Testadmin1")).thenReturn(userList.get(0));
+
+        //Make a request builder to mock client request
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
+
+        //Perform the request and return the result
+        MvcResult result = mockMvc.perform(rb).andReturn();
+
+        //Get the response from the result and convert to string
+        String testResult = result.getResponse().getContentAsString();
+
+        //Convert Array from Java to JSON Object Mapper
+        ObjectMapper mapper = new ObjectMapper();
+        String expectedResult = mapper.writeValueAsString(userList.get(0));
+
+        assertEquals(expectedResult, testResult);
+    }
+
+    @Test
+    public void getUserByNameNotFound() throws Exception{
+        //Mock API Url
+        String apiUrl = "/users/user/name/x";
+
+        //Mock the service call to find user by id
+        Mockito.when(userService.findByName("x")).thenReturn(null);
+
+        //Make a request builder to mock client request
+        RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
+
+        //Perform the request and return the result
+        MvcResult result = mockMvc.perform(rb).andReturn();
+
+        //Get the response from the result and convert to string
+        String testResult = result.getResponse().getContentAsString();
+
+        String expectedResult = "";
+
+        assertEquals(expectedResult, testResult);
     }
 
     @Test
