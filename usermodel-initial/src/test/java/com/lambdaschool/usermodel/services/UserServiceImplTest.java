@@ -105,13 +105,18 @@ public class UserServiceImplTest {
 
     @Test
     public void findByNameContaining() {
+        Mockito.when(userrepos.findByUsernameContainingIgnoreCase("adm"))
+                .thenReturn(userList);
         //Test that there is 1 result for all users whose name includes adm
-        assertEquals(1, userService.findByNameContaining("adm").size());
+        assertEquals(2, userService.findByNameContaining("adm").size());
     }
 
     @Test
     public void findAll() {
-        assertEquals(5, userService.findAll().size());
+        Mockito.when(userrepos.findAll())
+                .thenReturn(userList);
+        //Test that we find 2 total users in the database
+        assertEquals(2, userService.findAll().size());
     }
 
     @Test
