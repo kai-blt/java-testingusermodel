@@ -11,6 +11,7 @@ import com.lambdaschool.usermodel.services.RoleService;
 import com.lambdaschool.usermodel.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,15 @@ import java.util.Locale;
  * after the application context has been loaded.
  */
 @Transactional
+//command.line.runner.enabled = true / false
+//If true, the command line runner will work and load seed data
+//if false, the command line runner will not run and seed data WON'T load
+//Creates custom application properties
+@ConditionalOnProperty(
+    prefix = "command.line.runner",
+    value = "enabled",
+    havingValue = "true",
+    matchIfMissing = true)
 @Component
 public class SeedData
     implements CommandLineRunner
@@ -49,6 +59,7 @@ public class SeedData
      * @param args The parameter is required by the parent interface but is not used in this process.
      */
     @Transactional
+
     @Override
     public void run(String[] args) throws
                                    Exception
