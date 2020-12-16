@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.ArgumentMatchers.any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -137,20 +138,25 @@ public class UserServiceImplTest {
         testRole.setRoleid(1);
 
         //Create User to Save
-        User testUser = new User("TestUser", "TestPassword", "TestEmail@email.com");
-        testUser.setUserid(100);
+        User testUser = new User("testuser", "testpassword", "TestEmail@email.com");
+        testUser.setUserid(0);
 
         //Add role
         testUser.getRoles().add(new UserRoles(testUser, testRole));
+
+
+        //Mock the repository
+        Mockito.when(userrepos.save(any(User.class)))
+                .thenReturn(testUser);
 
         //Save user
         User savedUser = userService.save(testUser);
 
         //Make sure the user wasn't empty
-        assertNotNull(testUser);
+        assertNotNull(savedUser);
 
         //Make sure the added record's name matches what we provided
-        assertEquals("Testadmin", savedUser.getUsername());
+        assertEquals("testuser", savedUser.getUsername());
     }
 
     @Test
